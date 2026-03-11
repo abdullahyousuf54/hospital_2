@@ -1,0 +1,21 @@
+# ============================================================
+# FILES TO EXCLUDE FROM GIT — NEVER PUSH THESE TO GITHUB
+# ============================================================
+
+# Environment variables (contains secrets like DB passwords)
+.env
+
+# Node modules (can be reinstalled via npm install)
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
