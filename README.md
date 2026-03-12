@@ -1,134 +1,126 @@
-# 🏥 Hospital Patient Management System — Backend API
+# 📚 Library Management System — Backend API
 
-A production-ready REST API built with **Node.js**, **Express.js**, and **MongoDB** for managing hospital patient records.
+A production-ready REST API built with **Node.js**, **Express.js**, and **MongoDB** for managing a complete library workflow.
 
----
+## Features
+
+- Category management (create/update/delete/list)
+- Book management (add/edit/delete/list/search)
+- Member management (register/edit/delete/list/search)
+- Book issue and return workflow
+- Due-date tracking and overdue listing
+- Member borrowing history
 
 ## 📁 Project Structure
 
-```
-hospital-backend/
-│
+```text
+library-backend/
 ├── config/
-│   └── db.js                  # MongoDB connection setup
-│
+│   └── db.js
 ├── controllers/
-│   └── patientController.js   # Business logic for all patient operations
-│
+│   ├── bookController.js
+│   ├── borrowController.js
+│   ├── categoryController.js
+│   └── memberController.js
 ├── middleware/
-│   └── errorMiddleware.js     # Global error handling middleware
-│
+│   └── errorMiddleware.js
 ├── models/
-│   └── Patient.js             # Mongoose schema & model definition
-│
+│   ├── Book.js
+│   ├── BorrowRecord.js
+│   ├── Category.js
+│   └── Member.js
 ├── routes/
-│   └── patientRoutes.js       # API route definitions
-│
-├── .env                       # Environment variables (NEVER commit this!)
-├── .gitignore                 # Files excluded from Git
-├── package.json               # Project dependencies & scripts
-├── server.js                  # App entry point
-└── README.md                  # Project documentation
+│   ├── bookRoutes.js
+│   ├── borrowRoutes.js
+│   ├── categoryRoutes.js
+│   └── memberRoutes.js
+├── .env
+├── package.json
+├── server.js
+└── README.md
 ```
 
----
+## Database Schema (MongoDB Collections)
 
-## 🚀 Quick Start (Run Locally)
+### `categories`
+- `name` (unique, required)
+- `description`
+- `createdAt`, `updatedAt`
 
-### Step 1: Clone the repository
-```bash
-git clone https://github.com/YOUR_USERNAME/hospital-backend.git
-cd hospital-backend
-```
+### `books`
+- `title`, `author`, `isbn` (unique)
+- `category` (ObjectId -> categories)
+- `totalCopies`, `availableCopies`
+- `publishedYear`, `location`
+- `createdAt`, `updatedAt`
 
-### Step 2: Install dependencies
+### `members`
+- `fullName`, `email` (unique), `phoneNumber`
+- `membershipId` (unique), `membershipType`
+- `status`
+- `createdAt`, `updatedAt`
+
+### `borrowrecords`
+- `member` (ObjectId -> members)
+- `book` (ObjectId -> books)
+- `issueDate`, `dueDate`, `returnedAt`
+- `status` (`Issued`, `Returned`, `Overdue`)
+- `issuedBy`, `returnNotes`
+- `createdAt`, `updatedAt`
+
+## API Endpoints
+
+### Categories
+- `POST /api/categories` - Create category
+- `GET /api/categories` - List categories
+- `PUT /api/categories/:id` - Update category
+- `DELETE /api/categories/:id` - Delete category
+
+### Books
+- `POST /api/books` - Add book
+- `GET /api/books` - List books (supports `?category=<id>&availableOnly=true`)
+- `GET /api/books/search?q=clean+code` - Search books
+- `GET /api/books/:id` - Get single book
+- `PUT /api/books/:id` - Update book
+- `DELETE /api/books/:id` - Delete book
+
+### Members
+- `POST /api/members` - Register member
+- `GET /api/members` - List members
+- `GET /api/members/search?name=ashish` - Search members
+- `GET /api/members/:id` - Get single member
+- `PUT /api/members/:id` - Update member
+- `DELETE /api/members/:id` - Delete member
+- `GET /api/members/:id/history` - Member borrowing history
+
+### Borrow / Return
+- `POST /api/borrows/issue` - Issue book
+- `PUT /api/borrows/return/:recordId` - Return book
+- `GET /api/borrows` - List borrow records
+  - `?status=Issued`
+  - `?memberId=<id>`
+  - `?overdue=true`
+
+## Quick Start
+
+1. Install dependencies
 ```bash
 npm install
 ```
 
-### Step 3: Set up environment variables
-Create a `.env` file in the root directory:
+2. Set environment values
 ```env
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/hospitalDB?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/librarydb
 PORT=5000
 NODE_ENV=development
 ```
 
-### Step 4: Start the server
+3. Run the API
 ```bash
-# Development mode (auto-restart on file changes)
 npm run dev
-
-# Production mode
-npm start
 ```
 
-Server will run at: `http://localhost:5000`
-
----
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/patients` | Register a new patient |
-| `GET` | `/api/patients` | Get all patient records |
-| `GET` | `/api/patients/:id` | Get a single patient by ID |
-| `PUT` | `/api/patients/:id` | Update patient details |
-| `DELETE` | `/api/patients/:id` | Delete a patient record |
-| `GET` | `/api/patients/search?name=xyz` | Search by patient name |
-| `GET` | `/api/patients/search?disease=xyz` | Search by disease |
-
----
-
-## 📦 Request Body — Register Patient (POST)
-
-```json
-{
-  "fullName": "John Doe",
-  "email": "john.doe@email.com",
-  "phoneNumber": "+1-555-0123",
-  "age": 35,
-  "gender": "Male",
-  "disease": "Type 2 Diabetes",
-  "doctorAssigned": "Dr. Sarah Johnson",
-  "admissionDate": "2024-01-15",
-  "roomNumber": "A-204",
-  "patientType": "Inpatient",
-  "status": "Admitted"
-}
+4. Health check
+```bash
+GET http://localhost:5000/
 ```
-
----
-
-## ✅ HTTP Status Codes Used
-
-| Code | Meaning |
-|------|---------|
-| `200` | Success — request completed |
-| `201` | Created — new resource created |
-| `400` | Bad Request — invalid input |
-| `404` | Not Found — resource doesn't exist |
-| `500` | Server Error — something went wrong |
-
----
-
-## 🛠️ Tech Stack
-
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB Atlas
-- **ODM**: Mongoose
-- **Config**: dotenv
-
----
-
-## 🌐 Deployment
-
-This API is deployed on **Render**: [Your Render URL here]
-
----
-
-## 👨‍💻 Author
-
-Your Name — [GitHub](https://github.com/YOUR_USERNAME)
