@@ -16,6 +16,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
 const patientRoutes = require("./routes/patientRoutes");
+const authRoutes = require("./routes/authRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 // ── Initialize Express App ────────────────────────────────
@@ -60,11 +61,15 @@ app.get("/", (req, res) => {
     endpoints: {
       patients: "/api/patients",
       search: "/api/patients/search?name=xyz OR ?disease=xyz",
+      auth: "/auth",
     },
   });
 });
 
 // ── Mount API Routes ──────────────────────────────────────
+// Auth routes are prefixed with /auth
+app.use("/auth", authRoutes);
+
 // All patient-related routes are prefixed with /api/patients
 app.use("/api/patients", patientRoutes);
 

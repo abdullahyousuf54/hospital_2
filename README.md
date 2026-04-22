@@ -52,6 +52,7 @@ Create a `.env` file in the root directory:
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/hospitalDB?retryWrites=true&w=majority
 PORT=5000
 NODE_ENV=development
+JWT_SECRET=replace_with_a_secure_secret
 ```
 
 ### Step 4: Start the server
@@ -78,6 +79,8 @@ Server will run at: `http://localhost:5000`
 | `DELETE` | `/api/patients/:id` | Delete a patient record |
 | `GET` | `/api/patients/search?name=xyz` | Search by patient name |
 | `GET` | `/api/patients/search?disease=xyz` | Search by disease |
+| `POST` | `/auth/signup` | Register a new user (patient role) |
+| `POST` | `/auth/login` | Authenticate user and return JWT |
 
 ---
 
@@ -132,3 +135,25 @@ This API is deployed on **Render**: [Your Render URL here]
 ## 👨‍💻 Author
 
 Your Name — [GitHub](https://github.com/YOUR_USERNAME)
+
+---
+
+## 🔐 Authentication Added
+
+### Backend files
+- `models/User.js`
+- `controllers/authController.js`
+- `routes/authRoutes.js`
+- `middleware/authMiddleware.js`
+
+### Frontend files
+- `src/App.js`
+- `src/pages/Login.js`
+- `src/pages/Signup.js`
+- `src/services/authService.js`
+
+### Notes
+- JWT tokens are signed with `JWT_SECRET` from `.env`.
+- Tokens are returned by both signup and login endpoints.
+- Frontend stores token in `localStorage`.
+- Existing patient routes remain unchanged under `/api/patients`.
