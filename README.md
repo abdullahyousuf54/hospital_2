@@ -1,159 +1,94 @@
-# 🏥 Hospital Patient Management System — Backend API
+# 🏥 Hospital Patient Management System (MERN)
 
-A production-ready REST API built with **Node.js**, **Express.js**, and **MongoDB** for managing hospital patient records.
-
----
+This project now runs as a **single deployable service** on Render:
+- **Backend**: Node.js + Express + MongoDB
+- **Frontend**: React app built from `client/` and served by Express in production
 
 ## 📁 Project Structure
 
-```
-hospital-backend/
-│
+```text
+hospital_2/
+├── client/
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── pages/
+│   │   │   ├── Login.js
+│   │   │   └── Signup.js
+│   │   └── services/
+│   │       └── authService.js
+│   └── package.json
 ├── config/
-│   └── db.js                  # MongoDB connection setup
-│
 ├── controllers/
-│   └── patientController.js   # Business logic for all patient operations
-│
 ├── middleware/
-│   └── errorMiddleware.js     # Global error handling middleware
-│
 ├── models/
-│   └── Patient.js             # Mongoose schema & model definition
-│
 ├── routes/
-│   └── patientRoutes.js       # API route definitions
-│
-├── .env                       # Environment variables (NEVER commit this!)
-├── .gitignore                 # Files excluded from Git
-├── package.json               # Project dependencies & scripts
-├── server.js                  # App entry point
-└── README.md                  # Project documentation
+├── server.js
+└── package.json
 ```
 
----
+## ⚙️ Root Scripts
 
-## 🚀 Quick Start (Run Locally)
-
-### Step 1: Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/hospital-backend.git
-cd hospital-backend
+npm run build   # cd client && npm install && npm run build
+npm start       # node server.js
 ```
 
-### Step 2: Install dependencies
+## 🚀 Local Development
+
+### 1) Backend
 ```bash
 npm install
-```
-
-### Step 3: Set up environment variables
-Create a `.env` file in the root directory:
-```env
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/hospitalDB?retryWrites=true&w=majority
-PORT=5000
-NODE_ENV=development
-JWT_SECRET=replace_with_a_secure_secret
-```
-
-### Step 4: Start the server
-```bash
-# Development mode (auto-restart on file changes)
 npm run dev
+```
 
-# Production mode
+### 2) Frontend (optional local dev server)
+```bash
+cd client
+npm install
 npm start
 ```
 
-Server will run at: `http://localhost:5000`
+## 🏗️ Production Build
 
----
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/patients` | Register a new patient |
-| `GET` | `/api/patients` | Get all patient records |
-| `GET` | `/api/patients/:id` | Get a single patient by ID |
-| `PUT` | `/api/patients/:id` | Update patient details |
-| `DELETE` | `/api/patients/:id` | Delete a patient record |
-| `GET` | `/api/patients/search?name=xyz` | Search by patient name |
-| `GET` | `/api/patients/search?disease=xyz` | Search by disease |
-| `POST` | `/auth/signup` | Register a new user (patient role) |
-| `POST` | `/auth/login` | Authenticate user and return JWT |
-
----
-
-## 📦 Request Body — Register Patient (POST)
-
-```json
-{
-  "fullName": "John Doe",
-  "email": "john.doe@email.com",
-  "phoneNumber": "+1-555-0123",
-  "age": 35,
-  "gender": "Male",
-  "disease": "Type 2 Diabetes",
-  "doctorAssigned": "Dr. Sarah Johnson",
-  "admissionDate": "2024-01-15",
-  "roomNumber": "A-204",
-  "patientType": "Inpatient",
-  "status": "Admitted"
-}
+```bash
+cd client
+npm install
+npm run build
 ```
 
----
+This generates:
 
-## ✅ HTTP Status Codes Used
+```text
+client/build/
+```
 
-| Code | Meaning |
-|------|---------|
-| `200` | Success — request completed |
-| `201` | Created — new resource created |
-| `400` | Bad Request — invalid input |
-| `404` | Not Found — resource doesn't exist |
-| `500` | Server Error — something went wrong |
+In production, Express serves these static assets and uses a fallback route for React Router.
 
----
+## 🌐 Render Deployment (Single Web Service)
 
-## 🛠️ Tech Stack
+1. Push this repo to GitHub.
+2. In Render, create/update a **Web Service** pointing to this repo.
+3. Configure:
+   - **Build Command**: `npm run build`
+   - **Start Command**: `npm start`
+4. Set environment variables:
+   - `NODE_ENV=production`
+   - `MONGO_URI=...`
+   - `JWT_SECRET=...`
+   - (Optional) `PORT` is provided by Render automatically.
+5. Deploy.
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB Atlas
-- **ODM**: Mongoose
-- **Config**: dotenv
+After deploy:
+- `https://your-render-url/` loads the React frontend.
+- `https://your-render-url/login` and `/signup` work via React Router fallback.
+- API routes still work (for example `POST /auth/login`, `POST /auth/signup`, `GET /api/patients`).
 
----
+## ✅ API Endpoints (unchanged)
 
-## 🌐 Deployment
-
-This API is deployed on **Render**: [Your Render URL here]
-
----
-
-## 👨‍💻 Author
-
-Your Name — [GitHub](https://github.com/YOUR_USERNAME)
-
----
-
-## 🔐 Authentication Added
-
-### Backend files
-- `models/User.js`
-- `controllers/authController.js`
-- `routes/authRoutes.js`
-- `middleware/authMiddleware.js`
-
-### Frontend files
-- `src/App.js`
-- `src/pages/Login.js`
-- `src/pages/Signup.js`
-- `src/services/authService.js`
-
-### Notes
-- JWT tokens are signed with `JWT_SECRET` from `.env`.
-- Tokens are returned by both signup and login endpoints.
-- Frontend stores token in `localStorage`.
-- Existing patient routes remain unchanged under `/api/patients`.
+- `POST /auth/signup`
+- `POST /auth/login`
+- `GET /api/patients`
+- `POST /api/patients`
+- `GET /api/health`

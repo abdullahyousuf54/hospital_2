@@ -4,6 +4,7 @@
   "description": "Production-ready backend for Hospital Patient Record Management System",
   "main": "server.js",
   "scripts": {
+    "build": "cd client && npm install && npm run build",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
